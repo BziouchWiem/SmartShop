@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "720836601716",
+    "project_id": "smartshop-9a54e",
+    "storage_bucket": "smartshop-9a54e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:720836601716:android:a3fdac1c8a1ebef638ae21",
+        "android_client_info": {
+          "package_name": "com.wiem.smartshop"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3ReQi8JSIn-wuEBcjAwIcLR1aIwM3ylI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
