@@ -10,22 +10,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun LoginScreen(
-    authViewModel: AuthViewModel = viewModel(),
-    onLoginSuccess: () -> Unit
-) {
+fun SignupScreen(authViewModel: AuthViewModel = viewModel(), onSignupSuccess: () -> Unit) {
     val email by authViewModel.email
     val password by authViewModel.password
     val loading by authViewModel.loading
     val errorMessage by authViewModel.errorMessage
     val isLoggedIn by authViewModel.isLoggedIn
-
-    // 🔥 Navigation automatique après login
-    LaunchedEffect(isLoggedIn) {
-        if (isLoggedIn) {
-            onLoginSuccess()
-        }
-    }
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -43,7 +33,6 @@ fun LoginScreen(
                 label = { Text("Email") },
                 singleLine = true
             )
-
             TextField(
                 value = password,
                 onValueChange = { authViewModel.password.value = it },
@@ -53,24 +42,20 @@ fun LoginScreen(
             )
 
             if (errorMessage != null) {
-                Text(
-                    text = errorMessage!!,
-                    color = MaterialTheme.colorScheme.error
-                )
+                Text(text = errorMessage!!, color = MaterialTheme.colorScheme.error)
             }
 
-            Button(
-                onClick = { authViewModel.login() },
-                enabled = !loading
-            ) {
-                if (loading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp
-                    )
-                } else {
-                    Text("Se connecter")
-                }
+            Button(onClick = { authViewModel.signup() }, enabled = !loading) {
+                if (loading) CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    strokeWidth = 2.dp
+                )
+                else Text("S’inscrire")
+            }
+
+            if (isLoggedIn) {
+                onSignupSuccess()
             }
         }
     }

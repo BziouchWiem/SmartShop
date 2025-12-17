@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.wiem.smartshop.auth.LoginScreen
+import com.wiem.smartshop.navigation.NavGraph
 import com.wiem.smartshop.ui.theme.SmartShopTheme
 
 class MainActivity : ComponentActivity() {
@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SmartShopTheme {
-                LoginScreen()
+                NavGraph()
             }
         }
     }
