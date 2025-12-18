@@ -39,4 +39,10 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
             repository.delete(product)
         }
     }
+
+    fun updateProduct(product: ProductEntity) {
+        viewModelScope.launch {
+            repository.update(product)  // ✅ Correction ici
+        }
+    }
 }

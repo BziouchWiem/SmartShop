@@ -17,4 +17,11 @@ interface ProductDao {
 
     @Delete
     suspend fun deleteProduct(product: ProductEntity)
+
+    @Query("SELECT COUNT(*) FROM products")
+    fun getProductCount(): Flow<Int>
+
+    @Query("SELECT SUM(price * quantity) FROM products")
+    fun getTotalStockValue(): Flow<Double?>
+
 }
