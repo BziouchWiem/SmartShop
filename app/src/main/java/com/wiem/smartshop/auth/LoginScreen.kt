@@ -12,7 +12,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @Composable
 fun LoginScreen(
     authViewModel: AuthViewModel = viewModel(),
-    onLoginSuccess: () -> Unit
+    onLoginSuccess: () -> Unit,
+    onSignupClick: () -> Unit   // 👈 AJOUT
 ) {
     val email by authViewModel.email
     val password by authViewModel.password
@@ -20,7 +21,6 @@ fun LoginScreen(
     val errorMessage by authViewModel.errorMessage
     val isLoggedIn by authViewModel.isLoggedIn
 
-    // 🔥 Navigation automatique après login
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
             onLoginSuccess()
@@ -35,7 +35,8 @@ fun LoginScreen(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TextField(
                 value = email,
@@ -71,6 +72,11 @@ fun LoginScreen(
                 } else {
                     Text("Se connecter")
                 }
+            }
+
+            // 👇👇👇 LE LIEN MANQUANT
+            TextButton(onClick = onSignupClick) {
+                Text("Pas de compte ? S’inscrire")
             }
         }
     }

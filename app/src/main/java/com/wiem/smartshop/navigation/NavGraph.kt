@@ -7,6 +7,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.wiem.smartshop.auth.LoginScreen
 import com.wiem.smartshop.auth.SignupScreen
+import com.google.firebase.auth.FirebaseAuth
+import com.wiem.smartshop.home.HomeScreen
+
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
@@ -18,9 +21,15 @@ sealed class Screen(val route: String) {
 fun NavGraph() {
     val navController = rememberNavController()
 
+    val startDestination =
+        if (FirebaseAuth.getInstance().currentUser != null)
+            Screen.Home.route
+        else
+            Screen.Login.route
+
     NavHost(
         navController = navController,
-        startDestination = Screen.Login.route
+        startDestination = startDestination
     ) {
         composable(Screen.Login.route) {
             LoginScreen(
@@ -28,6 +37,9 @@ fun NavGraph() {
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
+                },
+                onSignupClick = {
+                    navController.navigate(Screen.Signup.route)
                 }
             )
         }
@@ -43,7 +55,14 @@ fun NavGraph() {
         }
 
         composable(Screen.Home.route) {
-            Text("Bienvenue sur SmartShop 🎉")
+            HomeScreen(
+                onLogout = {
+                    FirebaseAuth.getInstance().signOut()
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.Home.route) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }
