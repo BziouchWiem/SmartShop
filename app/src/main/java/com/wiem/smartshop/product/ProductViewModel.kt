@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.wiem.smartshop.data.local.AppDatabase
 import com.wiem.smartshop.data.local.ProductEntity
 import com.wiem.smartshop.repository.ProductRepository
+import com.wiem.smartshop.repository.FirestoreRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -16,7 +17,7 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
 
     init {
         val dao = AppDatabase.getDatabase(application).productDao()
-        repository = ProductRepository(dao)
+        repository = ProductRepository(dao, FirestoreRepository())
         products = repository.products
     }
 
@@ -42,7 +43,7 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
 
     fun updateProduct(product: ProductEntity) {
         viewModelScope.launch {
-            repository.update(product)  // ✅ Correction ici
+            repository.update(product)
         }
     }
 }
