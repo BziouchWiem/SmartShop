@@ -35,8 +35,9 @@ sealed class Screen(val route: String) {
     object Settings : Screen("settings")
     object Notifications : Screen("notifications")
 
+    // MODIFICATION : Support pour String et Int
     object ProductDetail : Screen("product_detail/{productId}") {
-        fun createRoute(productId: String) = "product_detail/$productId"
+        fun createRoute(productId: Any) = "product_detail/$productId"
     }
 }
 
@@ -137,6 +138,8 @@ fun NavGraph(
                 productViewModel = viewModel,
                 onBackClick = { navController.navigateUp() },
                 onProductClick = { product ->
+                    // AJOUT DE LOGS pour déboguer
+                    println("🔍 Navigation vers produit ID: ${product.id}")
                     navController.navigate(Screen.ProductDetail.createRoute(product.id))
                 }
             )
@@ -144,30 +147,46 @@ fun NavGraph(
 
         // ==================== PRODUCT DETAIL ====================
         composable(
-            Screen.ProductDetail.route,
-            arguments = listOf(navArgument("productId") { type = NavType.StringType })
+            route = Screen.ProductDetail.route,
+            arguments = listOf(
+                navArgument("productId") {
+                    type = NavType.StringType
+                    nullable = false
+                }
+            )
         ) { backStackEntry ->
             val productId = backStackEntry.arguments?.getString("productId")
+
+            // AJOUT DE LOGS pour déboguer
+            println("🔍 ProductDetail - ID reçu: $productId")
+
             val viewModel: ProductViewModel = viewModel()
             val products by viewModel.products.collectAsState(emptyList())
+
+            // AJOUT DE LOGS
+            println("🔍 Nombre de produits: ${products.size}")
+            products.forEach { println("🔍 Produit disponible: ${it.id} - ${it.name}") }
+
             val product = products.find { it.id == productId }
+
+            println("🔍 Produit trouvé: ${product?.name ?: "NULL"}")
 
             var showEditDialog by remember { mutableStateOf(false) }
 
-            product?.let {
+            if (product != null) {
                 ProductDetailScreen(
-                    product = it,
+                    product = product,
                     onBackClick = { navController.navigateUp() },
                     onEdit = { showEditDialog = true },
                     onDelete = {
-                        viewModel.deleteProduct(it)
+                        viewModel.deleteProduct(product)
                         navController.navigateUp()
                     }
                 )
 
                 if (showEditDialog) {
                     EditProductDialog(
-                        product = it,
+                        product = product,
                         onDismiss = { showEditDialog = false },
                         onConfirm = { updated ->
                             viewModel.updateProduct(updated)
@@ -175,8 +194,13 @@ fun NavGraph(
                         }
                     )
                 }
-            } ?: LaunchedEffect(Unit) {
-                navController.navigateUp()
+            } else {
+                // Afficher un message d'erreur au lieu de naviguer en arrière immédiatement
+                LaunchedEffect(Unit) {
+                    println("⚠️ ERREUR: Produit non trouvé avec l'ID: $productId")
+                    kotlinx.coroutines.delay(100) // Petit délai pour laisser les logs s'afficher
+                    navController.navigateUp()
+                }
             }
         }
 
