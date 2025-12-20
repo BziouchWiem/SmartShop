@@ -1,6 +1,9 @@
 package com.wiem.smartshop.auth
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,7 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 fun LoginScreen(
     authViewModel: AuthViewModel = viewModel(),
     onLoginSuccess: () -> Unit,
-    onSignupClick: () -> Unit   // 👈 AJOUT
+    onSignupClick: () -> Unit
 ) {
     val email by authViewModel.email
     val password by authViewModel.password
@@ -22,61 +25,80 @@ fun LoginScreen(
     val isLoggedIn by authViewModel.isLoggedIn
 
     LaunchedEffect(isLoggedIn) {
-        if (isLoggedIn) {
-            onLoginSuccess()
-        }
+        if (isLoggedIn) onLoginSuccess()
     }
 
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Column(
+        Card(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(24.dp)
                 .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            elevation = CardDefaults.cardElevation(8.dp),
+            shape = MaterialTheme.shapes.large
         ) {
-            TextField(
-                value = email,
-                onValueChange = { authViewModel.email.value = it },
-                label = { Text("Email") },
-                singleLine = true
-            )
-
-            TextField(
-                value = password,
-                onValueChange = { authViewModel.password.value = it },
-                label = { Text("Mot de passe") },
-                visualTransformation = PasswordVisualTransformation(),
-                singleLine = true
-            )
-
-            if (errorMessage != null) {
-                Text(
-                    text = errorMessage!!,
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
-
-            Button(
-                onClick = { authViewModel.login() },
-                enabled = !loading
+            Column(
+                modifier = Modifier.padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (loading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp
-                    )
-                } else {
-                    Text("Se connecter")
-                }
-            }
 
-            // 👇👇👇 LE LIEN MANQUANT
-            TextButton(onClick = onSignupClick) {
-                Text("Pas de compte ? S’inscrire")
+                Text(
+                    text = "Connexion",
+                    style = MaterialTheme.typography.headlineSmall
+                )
+
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { authViewModel.email.value = it },
+                    label = { Text("Email") },
+                    leadingIcon = {
+                        Icon(Icons.Default.Email, contentDescription = null)
+                    },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { authViewModel.password.value = it },
+                    label = { Text("Mot de passe") },
+                    leadingIcon = {
+                        Icon(Icons.Default.Lock, contentDescription = null)
+                    },
+                    visualTransformation = PasswordVisualTransformation(),
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                if (errorMessage != null) {
+                    Text(
+                        text = errorMessage!!,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
+                Button(
+                    onClick = { authViewModel.login() },
+                    enabled = !loading,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    if (loading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text("Se connecter")
+                    }
+                }
+
+                TextButton(onClick = onSignupClick) {
+                    Text("Pas de compte ? S’inscrire")
+                }
             }
         }
     }
